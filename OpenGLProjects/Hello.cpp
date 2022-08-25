@@ -71,13 +71,25 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// Create the vertex array object
+		unsigned int VAO;
+		glGenVertexArrays(1, &VAO);
+
 		// Create vertex buffer object
 		unsigned int VBO;
 		glGenBuffers(1, &VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
+		// Bind vertex array object
+		glBindVertexArray(VAO);
+
+		// Copy vertices array in a buffer for OpenGL to use
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		// Copy vertex data to buffer's memory as GL_STATIC_DRAW
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		// Set the vertex attribute pointers
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
 
 		// Create the vertex shader, attach the source to it and compile it
 		unsigned int vertexShader;
@@ -131,8 +143,12 @@ int main()
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
 
-
+		// Activate the shaderProgram to be used by later shader and rendering calls 
 		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+
+		// Draw the objects
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// Check if any events are triggered, to update the window and call callback functions
 		glfwPollEvents();
