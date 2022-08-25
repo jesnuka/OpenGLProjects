@@ -7,7 +7,7 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 // Process input inside the window
 void processInput(GLFWwindow* window);
-void keyCallback(GLFWwindow* window);
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // Triangle NDC, with Z being zero
 float triangle[] = 
@@ -16,6 +16,19 @@ float triangle[] =
 0.5f, -0.5f, 0.0f,
 0.0f, 0.5f, 0.0f
 };
+
+// 2 Triangles NDC, with Z being zero
+float triangles2[] =
+{
+-0.75f, -0.5f, 0.0f, // Left
+0.0f, -0.5f, 0.0f, // Right
+-0.35f, 0.5f, 0.0f, // Top
+
+0.0f, -0.5f, 0.0f, // Left
+0.75f, -0.5f, 0.0f, // Right
+0.35f, 0.5f, 0.0f, // Top
+};
+
 
 // Rectangle NDC, with Z being zero
 float vertices[] =
