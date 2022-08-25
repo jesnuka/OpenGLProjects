@@ -20,17 +20,25 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "}\0";
 
 
-void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
 
-void ProcessInput(GLFWwindow *window)
+void processInput(GLFWwindow *window)
 {
 	// Escape closes the window
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
+
+}
+
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	// M button toggles draw mode
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+		drawmode = (drawmode + 1) % 2;
 }
 
 int main()
@@ -59,13 +67,14 @@ int main()
 	}
 	// Set Window resizing function callback
 	glViewport(0, 0, 800, 600);
-	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
+	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+	glfwSetKeyCallback(window, keyCallback);
 
 	// Render Loop, one loop is a frame
 	while (!glfwWindowShouldClose(window))
 	{
 		// Get input
-		ProcessInput(window);
+		processInput(window);
 
 		// Clear the screen using ClearColor
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -79,6 +88,10 @@ int main()
 		unsigned int VBO;
 		glGenBuffers(1, &VBO);
 
+		// Create and bind an Element Buffer Object
+		unsigned int EBO;
+		glGenBuffers(1, &EBO);
+
 		// Bind vertex array object
 		glBindVertexArray(VAO);
 
@@ -87,6 +100,10 @@ int main()
 		// Copy vertex data to buffer's memory as GL_STATIC_DRAW
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+		// Copy index array to an element buffer for OpenGL to use
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 		// Set the vertex attribute pointers
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
@@ -94,7 +111,7 @@ int main()
 		// Create the vertex shader, attach the source to it and compile it
 		unsigned int vertexShader;
 		vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		
+
 		glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 		glCompileShader(vertexShader);
 
@@ -147,8 +164,24 @@ int main()
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
 
-		// Draw the objects
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		switch (drawmode)
+		{
+		case 0:
+			// Wireframe Mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			break;
+		case 1:
+			// Fill Mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			break;
+		default:
+			break;
+		}
+
+		// Draw the objects using an Element Array Buffer, which is stored binded in the VAO
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 
 		// Check if any events are triggered, to update the window and call callback functions
 		glfwPollEvents();
