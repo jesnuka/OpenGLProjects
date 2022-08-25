@@ -70,34 +70,45 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 	glfwSetKeyCallback(window, keyCallback);
 
-	// Create the vertex array object
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
+	// Create the vertex array objects
+	unsigned int VAOs[2];
+	glGenVertexArrays(2, VAOs);
 
-	// Create vertex buffer object
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
+	// Create vertex buffer objects
+	unsigned int VBOs[2];
+	glGenBuffers(2, VBOs);
 
 	// Create and bind an Element Buffer Object
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
+	//unsigned int EBO;
+//	glGenBuffers(1, &EBO);
 
-	// Bind vertex array object
-	glBindVertexArray(VAO);
-
+	// Bind vertex array object 1
+	glBindVertexArray(VAOs[0]);
 	// Copy vertices array in a buffer for OpenGL to use
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 	// Copy vertex data to buffer's memory as GL_STATIC_DRAW
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangles2), triangles2, GL_STATIC_DRAW);
-
-	// Copy index array to an element buffer for OpenGL to use
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle1), triangle1, GL_STATIC_DRAW);
 
 	// Set the vertex attribute pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	// Bind vertex array object 2
+	glBindVertexArray(VAOs[1]);
+	// Copy vertices array in a buffer for OpenGL to use
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+	// Copy vertex data to buffer's memory as GL_STATIC_DRAW
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle2), triangle2, GL_STATIC_DRAW);
+
+	// Set the vertex attribute pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// Copy index array to an element buffer for OpenGL to use
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// Create the vertex shader, attach the source to it and compile it
 	unsigned int vertexShader;
@@ -177,9 +188,13 @@ int main()
 
 			// Activate the shaderProgram to be used by later shader and rendering calls 
 			glUseProgram(shaderProgram);
-			glBindVertexArray(VAO);
-		
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			glBindVertexArray(VAOs[0]);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
+			glBindVertexArray(VAOs[1]);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
 
 			// Draw the objects using an Element Array Buffer, which is stored binded in the VAO
 			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

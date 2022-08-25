@@ -17,6 +17,20 @@ float triangle[] =
 0.0f, 0.5f, 0.0f
 };
 
+float triangle1[] =
+{
+-0.75f, -0.5f, 0.0f, // Left
+0.0f, -0.5f, 0.0f, // Right
+-0.35f, 0.5f, 0.0f, // Top
+};
+
+float triangle2[] =
+{
+0.0f, -0.5f, 0.0f, // Left
+0.75f, -0.5f, 0.0f, // Right
+0.35f, 0.5f, 0.0f, // Top
+};
+
 // 2 Triangles NDC, with Z being zero
 float triangles2[] =
 {
