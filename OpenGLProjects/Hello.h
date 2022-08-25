@@ -1,4 +1,7 @@
 #pragma once
 
 // Resize the window
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+// Process input inside the window
+void ProcessInput(GLFWwindow* window);
