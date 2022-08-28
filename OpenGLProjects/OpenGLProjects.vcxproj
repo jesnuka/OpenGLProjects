@@ -85,8 +85,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\jesse\OneDrive\Työpöytä\C++Stuff\OpenGL\Tools\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\jesse\OneDrive\Työpöytä\C++Stuff\OpenGL\Tools\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
