@@ -3,27 +3,32 @@
 #include <iostream>
 #include "Hello.h"
 
-// Store the Vertex Shader GLSL as a const C string for now
+// Store the Vertex Shader GLSL as a const C string
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
+"out vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
 " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+" vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
 "}\0";
 
-// Store the Fragment Shaders GLSL as a const C string for now
+// Store the Fragment Shaders GLSL as a const C string
 const char* fragmentShaderSource1 = "#version 330 core\n"
 "out vec4 FragColor;\n"
+"in vec4 vertexColor;\n"
+"uniform vec4 uniColor;\n"
 "void main()\n"
 "{\n"
-"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"	FragColor = uniColor;\n"
 "}\0";
 
 const char* fragmentShaderSource2 = "#version 330 core\n"
 "out vec4 FragColor;\n"
+"in vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
-"	FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+"	FragColor = vertexColor;\n"
 "}\0";
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
@@ -219,6 +224,13 @@ int main()
 
 			// Activate the shaderProgram to be used by later shader and rendering calls 
 			glUseProgram(shaderProgram);
+
+			// Update Uniform Color
+			float timeVal = glfwGetTime();
+			float greenVal = sin(timeVal) / 2.0f + 0.5f;
+			int vertexColorLoc = glGetUniformLocation(shaderProgram, "uniColor");
+			glUniform4f(vertexColorLoc, 0.0f, greenVal, 0.0f, 1.0f);
+
 			glBindVertexArray(VAOs[0]);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 

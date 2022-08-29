@@ -1,1 +1,3 @@
-﻿  OpenGLProjects.vcxproj -> C:\Users\hetur\OneDrive\Työpöytä\Cpp_Projektit\OpenGL\OpenGLProjects\x64\Debug\OpenGLProjects.exe
+﻿  Hello.cpp
+C:\Users\jesse\OneDrive\Työpöytä\C++Stuff\OpenGL\OpenGLProjects\OpenGLProjects\Hello.cpp(229,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  OpenGLProjects.vcxproj -> C:\Users\jesse\OneDrive\Työpöytä\C++Stuff\OpenGL\OpenGLProjects\x64\Debug\OpenGLProjects.exe
