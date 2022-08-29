@@ -6,30 +6,31 @@
 // Store the Vertex Shader GLSL as a const C string
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
-"out vec4 vertexColor;\n"
+"layout (location = 1) in vec3 aColor;\n"
+"out vec3 vertexColor;\n"
 "void main()\n"
 "{\n"
-" gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-" vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
+" gl_Position = vec4(aPos, 1.0);\n"
+" vertexColor = aColor;\n"
 "}\0";
 
 // Store the Fragment Shaders GLSL as a const C string
 const char* fragmentShaderSource1 = "#version 330 core\n"
 "out vec4 FragColor;\n"
-"in vec4 vertexColor;\n"
+"in vec3 vertexColor;\n"
 "uniform vec4 uniColor;\n"
 "void main()\n"
 "{\n"
-"	FragColor = uniColor;\n"
+"	FragColor = vec4(vertexColor,1.0);\n"
 "}\0";
 
-const char* fragmentShaderSource2 = "#version 330 core\n"
+/*const char* fragmentShaderSource2 = "#version 330 core\n"
 "out vec4 FragColor;\n"
 "in vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
 "	FragColor = vertexColor;\n"
-"}\0";
+"}\0";*/
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -99,13 +100,17 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 	// Copy vertex data to buffer's memory as GL_STATIC_DRAW
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle1), triangle1, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// Set the vertex attribute pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	// Bind vertex array object 2
+	// Color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (3* sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	/*// Bind vertex array object 2
 	glBindVertexArray(VAOs[1]);
 	// Copy vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
@@ -115,7 +120,7 @@ int main()
 
 	// Set the vertex attribute pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(0);*/
 
 	// Copy index array to an element buffer for OpenGL to use
 //	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -152,7 +157,7 @@ int main()
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::FRAGMENT:COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
-	unsigned int fragmentShader2;
+	/*unsigned int fragmentShader2;
 	fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
 	glCompileShader(fragmentShader2); 
@@ -164,18 +169,19 @@ int main()
 		glGetShaderInfoLog(fragmentShader2, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::FRAGMENT:COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
-
+	*/
 	// Create a shader program for linking the vertex and fragment shaders
-	unsigned int shaderProgram, shaderProgram2;
+	//unsigned int shaderProgram, shaderProgram2;
+	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
-	shaderProgram2 = glCreateProgram();
+	//shaderProgram2 = glCreateProgram();
 	// Attach the shaders to the program and link them
 	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram2, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
-	glAttachShader(shaderProgram2, fragmentShader2);
 	glLinkProgram(shaderProgram);
-	glLinkProgram(shaderProgram2);
+//	glAttachShader(shaderProgram2, vertexShader);
+	//glAttachShader(shaderProgram2, fragmentShader2);
+	//glLinkProgram(shaderProgram2);
 
 	// TODO: Combine error checking
 	// Check for errors
@@ -186,16 +192,16 @@ int main()
 		std::cout << "ERROR::PROGRAM::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 	// Check for errors
-	glGetProgramiv(shaderProgram2, GL_COMPILE_STATUS, &success);
+	/*glGetProgramiv(shaderProgram2, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
 		glGetProgramInfoLog(shaderProgram2, 512, NULL, infoLog);
 		std::cout << "ERROR::PROGRAM::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
+	}*/
 	// Delete shaders as they are not needed anymore after linking
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-	glDeleteShader(fragmentShader2);
+	//glDeleteShader(fragmentShader2);
 
 	switch (drawmode)
 	{
@@ -235,9 +241,9 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
-			glUseProgram(shaderProgram2);
-			glBindVertexArray(VAOs[1]);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+		//	glUseProgram(shaderProgram2);
+			//glBindVertexArray(VAOs[1]);
+			//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 			// Draw the objects using an Element Array Buffer, which is stored binded in the VAO
 			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

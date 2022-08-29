@@ -45,12 +45,11 @@ float triangles2[] =
 
 
 // Rectangle NDC, with Z being zero
-float vertices[] =
-{
-	0.5f, 0.5f, 0.0f, // top right
-	0.5f, -0.5f, 0.0f, // bottom right
-	-0.5f, -0.5f, 0.0f, // bottom left
-	-0.5f, 0.5f, 0.0f // top left
+float vertices[] = {
+	// positions // colors
+	0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
+	-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left
+	0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f // top
 };
 
 // Unique vertices used by an Element Buffer Object to draw a triangle using indiced vertices from the rectangle
