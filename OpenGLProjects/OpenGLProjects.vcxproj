@@ -24,6 +24,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Hello.h" />
+    <ClInclude Include="Shader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\shaderFragment.fs" />
+    <None Include="shaders\shaderVertex.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
