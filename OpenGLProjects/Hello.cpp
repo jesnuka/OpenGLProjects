@@ -237,6 +237,7 @@ int main()
 		//	int vertexColorLoc = glGetUniformLocation(shaderProgram, "uniColor");
 		//	glUniform4f(vertexColorLoc, 0.0f, greenVal, 0.0f, 1.0f);
 			shaderProgram.setFloat("uniColor", greenVal);
+			//shaderProgram.setFloat("offsetVal", 0.5f);
 
 			glBindVertexArray(VAOs[0]);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
