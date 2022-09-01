@@ -81,6 +81,36 @@ int main()
 
 	Shader shaderProgram("shaders/shaderVertex.vs", "shaders/shaderFragment.fs");
 
+	
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	// Set the texture filtering and wrapping options
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	// Load the data
+	int width, height, nrChannels;
+	const char* fileName = "woodPlanks.jpg";
+	unsigned char* textureData = stbi_load(fileName, &width, &height,
+		&nrChannels, 0);
+
+	// If data was loaded successfully, generate the texture and it's mipmaps
+	if (textureData)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load the texture: "<< fileName << std::endl;
+	}
+
+	// Free the image memory once it has been used
+	stbi_image_free(textureData);
+
 	// Create the vertex array objects
 	unsigned int VAOs[2];
 	glGenVertexArrays(2, VAOs);
@@ -90,8 +120,8 @@ int main()
 	glGenBuffers(2, VBOs);
 
 	// Create and bind an Element Buffer Object
-	//unsigned int EBO;
-//	glGenBuffers(1, &EBO);
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
 
 	// Bind vertex array object 1
 	glBindVertexArray(VAOs[0]);
@@ -99,31 +129,37 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 	// Copy vertex data to buffer's memory as GL_STATIC_DRAW
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle), rectangle, GL_STATIC_DRAW);
 
 	// Set the vertex attribute pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// Color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (3* sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	/*// Bind vertex array object 2
-	glBindVertexArray(VAOs[1]);
+	// Texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	// Bind vertex array object 2
+	/*lBindVertexArray(VAOs[1]);
 	// Copy vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 	// Copy vertex data to buffer's memory as GL_STATIC_DRAW
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle2), triangle2, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle), rectangle, GL_STATIC_DRAW);
 
 	// Set the vertex attribute pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);*/
 
+
 	// Copy index array to an element buffer for OpenGL to use
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// Create the vertex shader, attach the source to it and compile it
 	/*unsigned int vertexShader;
@@ -234,21 +270,23 @@ int main()
 			// Update Uniform Color
 			float timeVal = glfwGetTime();
 			float greenVal = sin(timeVal) / 2.0f + 0.5f;
-		//	int vertexColorLoc = glGetUniformLocation(shaderProgram, "uniColor");
+			//int vertexColorLoc = glGetUniformLocation(shaderProgram, "uniColor");
 		//	glUniform4f(vertexColorLoc, 0.0f, greenVal, 0.0f, 1.0f);
 			shaderProgram.setFloat("uniColor", greenVal);
 			//shaderProgram.setFloat("offsetVal", 0.5f);
 
-			glBindVertexArray(VAOs[0]);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+		//	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
 		//	glUseProgram(shaderProgram2);
-			//glBindVertexArray(VAOs[1]);
+		//	glBindVertexArray(VAOs[1]);
 			//glDrawArrays(GL_TRIANGLES, 0, 3);
 
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			glBindVertexArray(VAOs[0]);
+
 			// Draw the objects using an Element Array Buffer, which is stored binded in the VAO
-			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 			glBindVertexArray(0);
 
 			// Check if any events are triggered, to update the window and call callback functions

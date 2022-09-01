@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="Hello.cpp" />
+    <ClCompile Include="stb_images.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Hello.h" />

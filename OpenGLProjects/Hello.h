@@ -2,9 +2,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 #include "Shader.h"
+#include "stb_image.h"
 
 
 int drawmode = 1;
@@ -51,12 +50,21 @@ float triangles2[] =
 };
 
 
-// Rectangle NDC, with Z being zero
+// triangle
 float vertices[] = {
 	// positions // colors
 	0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
 	-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left
 	0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f // top
+};
+
+// Rectangle NDC, with Z being zero and with texture coordinates
+float rectangle[] = {
+	// positions // colors // texture coords
+	0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
+	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+	-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // top left
 };
 
 // Unique vertices used by an Element Buffer Object to draw a triangle using indiced vertices from the rectangle
