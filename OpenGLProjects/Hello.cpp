@@ -82,35 +82,7 @@ int main()
 	Shader shaderProgram("shaders/shaderVertex.vs", "shaders/shaderFragment.fs");
 
 	
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	// Set the texture filtering and wrapping options
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	// Load the data
-	int width, height, nrChannels;
-	const char* fileName = "woodPlanks.jpg";
-	unsigned char* textureData = stbi_load(fileName, &width, &height,
-		&nrChannels, 0);
-
-	// If data was loaded successfully, generate the texture and it's mipmaps
-	if (textureData)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load the texture: "<< fileName << std::endl;
-	}
-
-	// Free the image memory once it has been used
-	stbi_image_free(textureData);
-
+	
 	// Create the vertex array objects
 	unsigned int VAOs[2];
 	glGenVertexArrays(2, VAOs);
@@ -160,6 +132,61 @@ int main()
 	// Copy index array to an element buffer for OpenGL to use
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	unsigned int texture1, texture2;
+	// First texture
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	// Set the texture filtering and wrapping options
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	// Load the data
+	int width, height, nrChannels;
+	const char* fileName1 = "woodPlanks.jpg";
+	unsigned char* textureData = stbi_load(fileName1, &width, &height,
+		&nrChannels, 0);
+
+	// If data was loaded successfully, generate the texture and it's mipmaps
+	if (textureData)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load the texture: " << fileName1 << std::endl;
+	}
+	stbi_image_free(textureData);
+
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	// Set the texture filtering and wrapping options
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// Second texture
+	const char* fileName2 = "door.png";
+	textureData = stbi_load(fileName2, &width, &height,
+		&nrChannels, 0);
+
+	// If data was loaded successfully, generate the texture and it's mipmaps
+	if (textureData)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load the texture: " << fileName2 << std::endl;
+	}
+
+	// Free the image memory once it has been used
+	stbi_image_free(textureData);
+
 
 	// Create the vertex shader, attach the source to it and compile it
 	/*unsigned int vertexShader;
@@ -252,6 +279,10 @@ int main()
 	default:
 		break;
 	}
+		// Activate shader, and set samplers
+		shaderProgram.use(); 
+		glUniform1i(glGetUniformLocation(shaderProgram.ID, "uniTexture1"), 0); // Manually
+		shaderProgram.setInt("uniTexture2", 1); // Using shader class
 
 		// Render Loop, one loop is a frame
 		while (!glfwWindowShouldClose(window))
@@ -263,6 +294,11 @@ int main()
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			// Bind textures of texture units
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture1);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, texture2);
 
 			// Activate the shaderProgram to be used by later shader and rendering calls 
 			shaderProgram.use();
@@ -281,8 +317,10 @@ int main()
 		//	glUseProgram(shaderProgram2);
 		//	glBindVertexArray(VAOs[1]);
 			//glDrawArrays(GL_TRIANGLES, 0, 3);
-
-			glBindTexture(GL_TEXTURE_2D, textureID);
+		//	glActiveTexture(GL_TEXTURE0);
+		//	glBindTexture(GL_TEXTURE_2D, texture1);
+		//	glActiveTexture(GL_TEXTURE1);
+		//	glBindTexture(GL_TEXTURE_2D, texture2);
 			glBindVertexArray(VAOs[0]);
 
 			// Draw the objects using an Element Array Buffer, which is stored binded in the VAO
